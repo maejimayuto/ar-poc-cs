@@ -1,65 +1,63 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+    <head>
+        <meta charset="utf-8">
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/7.8.0/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/7.8.0/firebase-auth.js"></script>
-    <script defer src="/__/firebase/7.8.0/firebase-database.js"></script>
-    <script defer src="/__/firebase/7.8.0/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/7.8.0/firebase-storage.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
+        <!-- A-Frame ライブラリの読み込み -->
+        <script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+        <!-- AR.js ライブラリの読み込み -->
+        <script src="https://jeromeetienne.github.io/AR.js/aframe/build/aframe-ar.js"></script>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        <title>WebAR Demo</title>
+    </head>
 
-        try {
-          let app = firebase.app();
-          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
+    <body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+
+        <!-- 3Dオブジェクトの読み込み -->
+        <!-- OBJファイルはモデル形状、MTLファイルはテクスチャ情報 -->
+        <!-- ここで指定したIDを呼び出し時に使う -->
+        <a-assets>
+            <a-asset-item id="signpanel_mtl" src="static/models/signpanel/signpanel.mtl"></a-asset-item>
+            <a-asset-item id="signpanel_obj" src="static/models/signpanel/signpanel.obj"></a-asset-item>
+        </a-assets>
+
+        <a-assets>
+            <a-asset-item id="grass_obj" src="static/models/grass/grass.obj"></a-asset-item>
+            <a-asset-item id="grass_mtl" src="static/models/grass/grass.mtl"></a-asset-item>
+        </a-assets>
+
+        <!-- ARオブジェクトを描画するシーンの定義 -->
+        <a-scene stats embedded arjs='debugUIEnabled: false; sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; canvasWidth: 240; canvasHeight: 180'>
+            <!-- ARマーカに対する描画オブジェクト -->
+            <a-marker preset="custom" type="pattern" url="static/marker/pattern.patt">
+                <!-- オブジェクト1つめの配置 -->
+                <a-obj-model src="#signpanel_obj" mtl="#signpanel_mtl" position="0 0 0" rotation="-100 0 0" scale="0.05 0.05 0.05" visible="true"></a-obj-model>
+
+                <!-- a-entityタグでオブジェクトやアニメーションの定義をまとめる -->
+                <a-entity>
+                    <a-obj-model src="#grass_obj" mtl="#grass_mtl" position="-0.3 0 0" rotation="-90 0 0" scale="0.03 0.03 0.03" visible="true"></a-obj-model>
+                    <!-- アニメーションもHTMLタグで定義可能 -->
+                    <a-animation attribute="rotation" dur="5000" fill="forwards" to="0 360 0" repeat="indefinite"></a-animation>
+                </a-entity>
+
+                <!-- テキストも描画可能 -->
+                <a-text value="Augmented" position='-0.8 1.9 -0.1' rotation="0 0 0" scale="1.5 1.5 1.5" color="#111111"></a-text>
+                <a-text value="Reality" position='-0.3 1.3 -0.1' rotation="0 0 0" scale="1.5 1.5 1.5" color="#111111"></a-text>
+            </a-marker>
+
+            <!-- マルチマーカの場合はa-markerタグを複数書く -->
+            <a-marker preset="custom" type="pattern" url="static/marker/pattern2.patt">
+                <a-obj-model src="#signpanel_obj" mtl="#signpanel_mtl" position="0 0 0" rotation="-100 0 0" scale="0.05 0.05 0.05" visible="true"></a-obj-model>
+                <a-entity>
+                    <a-obj-model src="#grass_obj" mtl="#grass_mtl" position="-0.3 0 0" rotation="-90 0 0" scale="0.03 0.03 0.03" visible="true"></a-obj-model>
+                    <a-animation attribute="rotation" dur="5000" fill="forwards" to="0 360 0" repeat="indefinite"></a-animation>
+                </a-entity>
+                <a-text value="Multi Marker" position='-0.7 1.7 -0.1' rotation="0 0 0" scale="1.2 1.2 1.2" color="#111111"></a-text>
+            </a-marker>
+
+            <!-- カメラオブジェクトの配置 -->
+            <a-camera-static/>
+        </a-scene>
+    </body>
 </html>
